@@ -9,13 +9,16 @@ import battleship.interfaces.Position;
  * Created by Ejdems on 05/12/2016.
  */
 public class PassAI implements BattleshipsPlayer {
+    private int sizeY;
+    private int sizeX;
+
     @Override
-    public void startMatch(int i, Fleet fleet, int i1, int i2) {
+    public void startMatch(int rounds, Fleet ships, int sizeX, int sizeY) {
 
     }
 
     @Override
-    public void startRound(int i) {
+    public void startRound(int round) {
 
     }
 
@@ -25,27 +28,27 @@ public class PassAI implements BattleshipsPlayer {
     }
 
     @Override
-    public void incoming(Position position) {
+    public void incoming(Position pos) {
 
     }
 
     @Override
-    public Position getFireCoordinates(Fleet fleet) {
+    public Position getFireCoordinates(Fleet enemyShips) {
         return null;
     }
 
     @Override
-    public void hitFeedBack(boolean b, Fleet fleet) {
+    public void hitFeedBack(boolean hit, Fleet enemyShips) {
 
     }
 
     @Override
-    public void endRound(int i, int i1, int i2) {
+    public void endRound(int round, int points, int enemyPoints) {
 
     }
 
     @Override
-    public void endMatch(int i, int i1, int i2) {
+    public void endMatch(int won, int lost, int draw) {
 
     }
 }
