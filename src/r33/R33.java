@@ -1,7 +1,7 @@
 package r33;
 
 import battleship.interfaces.BattleshipsPlayer;
-import r33.ai.PassAI;
+import r33.ai.HyggeAI;
 import tournament.player.PlayerFactory;
 
 /**
@@ -10,7 +10,7 @@ import tournament.player.PlayerFactory;
 public class R33 implements PlayerFactory<BattleshipsPlayer> {
     @Override
     public BattleshipsPlayer getNewInstance() {
-        return new PassAI();
+        return new HyggeAI();
     }
 
     @Override
