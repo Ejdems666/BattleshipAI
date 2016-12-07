@@ -1,4 +1,4 @@
-package r33.ai;
+package r33.ai.mode;
 
 import battleship.interfaces.Fleet;
 import battleship.interfaces.Position;

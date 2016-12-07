@@ -1,17 +1,16 @@
-package r33.ai;
+package r33.ai.mode;
 
 import battleship.interfaces.Fleet;
 import battleship.interfaces.Position;
 import battleship.interfaces.Ship;
+import r33.ai.Field;
 
 import java.util.*;
 
 /**
  * Created by Ejdems on 06/12/2016.
  */
-public class HuntMode implements Mode {
-    private int[][] grid;
-    private Field field;
+public class HuntMode extends FieldScanner implements Mode {
     private int parityCheck = 0;
 
     public HuntMode(Field field) {
@@ -23,9 +22,7 @@ public class HuntMode implements Mode {
         grid = new int[field.getX()][field.getY()];
         scanGrid(enemyShips);
         printGrid();
-        Position bestShot = getBestShot();
-        field.registerShot(bestShot);
-        return bestShot;
+        return getBestShot();
     }
 
     private void scanGrid(Fleet enemyShips) {
@@ -35,49 +32,13 @@ public class HuntMode implements Mode {
             for (int x = 0; x < field.getX(); x++) {
                 for (int y = 0; y < field.getY(); y++) {
                     if (ship.size() + y <= field.getX()) {
-                        placeShipVerticaly(ship, x, y);
+                        placeShipVerticaly(ship, x, y,Field.HIT);
                     }
                     if (ship.size() + x <= field.getX()) {
-                        placeShipHorizontaly(ship, y, x);
+                        placeShipHorizontaly(ship, y, x,Field.HIT);
                     }
                 }
             }
-        }
-    }
-
-    private void printGrid() {
-        for (int xx = 0; xx < field.getX(); xx++) {
-            System.out.println("");
-            for (int yy = 0; yy < field.getY(); yy++) {
-                if (grid[xx][yy] < 10) {
-                    System.out.print(" |" + grid[xx][yy] + " | ");
-                } else {
-                    System.out.print(" |" + grid[xx][yy] + "| ");
-                }
-            }
-        }
-        System.out.println("\n----------------------------------------\n");
-    }
-
-    private void placeShipVerticaly(Ship ship, int x, int y) {
-        for (int l = y; l < ship.size() + y; l++) {
-            if (field.isHit(x,l)) {
-                return;
-            }
-        }
-        for (int l = y; l < ship.size() + y; l++) {
-            grid[x][l] += 1;
-        }
-    }
-
-    private void placeShipHorizontaly(Ship ship, int y, int x) {
-        for (int l = x; l < ship.size() + x; l++) {
-            if (field.isHit(l,y)) {
-                return;
-            }
-        }
-        for (int l = x; l < ship.size() + x; l++) {
-            grid[l][y] += 1;
         }
     }
 

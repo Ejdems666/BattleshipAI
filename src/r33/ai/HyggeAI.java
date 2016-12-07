@@ -4,6 +4,9 @@ import battleship.interfaces.BattleshipsPlayer;
 import battleship.interfaces.Board;
 import battleship.interfaces.Fleet;
 import battleship.interfaces.Position;
+import r33.ai.mode.HuntMode;
+import r33.ai.mode.Mode;
+import r33.ai.mode.TargetMode;
 
 /**
  * Created by Ejdems on 05/12/2016.
@@ -45,14 +48,17 @@ public class HyggeAI implements BattleshipsPlayer {
 
     @Override
     public Position getFireCoordinates(Fleet enemyShips) {
-        return currentMode.getShot(enemyShips);
+        Position shot = currentMode.getShot(enemyShips);
+        field.setLastShot(shot);
+        return shot;
     }
 
     @Override
     public void hitFeedBack(boolean hit, Fleet enemyShips) {
+        field.registerHit(field.getLastShot(),hit);
         if (hit) {
             if (currentMode instanceof HuntMode) {
-                currentMode = new TargetMode(enemyShips,field);
+                currentMode = new TargetMode(field);
             } else if (((TargetMode) currentMode).hadSafelySunk(enemyShips)) {
                 currentMode = huntModes[currentRound];
             }

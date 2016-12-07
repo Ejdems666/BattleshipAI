@@ -1,7 +1,7 @@
 import battleship.implementations.SimpleFleet;
 import battleship.interfaces.Fleet;
 import r33.ai.Field;
-import r33.ai.HuntMode;
+import r33.ai.mode.HuntMode;
 
 /**
  * Created by Ejdems on 06/12/2016.

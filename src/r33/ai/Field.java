@@ -7,11 +7,12 @@ import battleship.interfaces.Position;
  */
 public class Field {
     private int[][] hits;
-    private Position lastHit;
-    private final int HIT = 1;
-    private final int SHIP_HIT = 2;
+    private Position lastShot;
     private final int x;
     private final int y;
+
+    public static final int HIT = 1;
+    public static final int SHIP_HIT = 2;
 
     public Field(int x, int y) {
         hits = new int[x][y];
@@ -19,17 +20,12 @@ public class Field {
         this.y = y;
     }
 
-    public void registerShot(Position position) {
-        lastHit = position;
-        hits[position.x][position.y] = 1;
+    public void registerHit(Position position, boolean hit) {
+        hits[position.x][position.y] = hit ? 2 : 1;
     }
 
-    public boolean isHit(int x, int y) {
-        return hits[x][y] == HIT;
-    }
-
-    public boolean isShipHit(int x, int y) {
-        return hits[x][y] == SHIP_HIT;
+    public boolean isHit(int x, int y, int allowedHitTypes) {
+        return hits[x][y] <= allowedHitTypes && hits[x][y] > 0;
     }
 
     public int getX() {
@@ -40,7 +36,11 @@ public class Field {
         return y;
     }
 
-    public Position getLastHit() {
-        return lastHit;
+    public Position getLastShot() {
+        return lastShot;
+    }
+
+    public void setLastShot(Position lastShot) {
+        this.lastShot = lastShot;
     }
 }
