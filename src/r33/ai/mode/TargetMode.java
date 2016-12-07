@@ -20,7 +20,7 @@ public class TargetMode extends FieldScanner implements Mode {
         this.enemyShips = enemyShips;
         grid = new int[field.getX()][field.getY()];
         scanGrid(enemyShips);
-        printGrid();
+//        printGrid();
         return getBestShot();
     }
 

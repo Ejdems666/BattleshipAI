@@ -37,7 +37,7 @@ public class HyggeAI implements BattleshipsPlayer {
     @Override
     public void placeShips(Fleet fleet, Board board) {
         for (int i = 0; i < fleet.getNumberOfShips(); i++) {
-            board.placeShip(new Position(0, i), fleet.getShip(i), true);
+            board.placeShip(new Position(0, i), fleet.getShip(i), false);
         }
     }
 

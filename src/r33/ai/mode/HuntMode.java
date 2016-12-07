@@ -19,7 +19,7 @@ public class HuntMode extends FieldScanner implements Mode {
     public Position getShot(Fleet enemyShips) {
         grid = new int[field.getX()][field.getY()];
         scanGrid(enemyShips);
-        printGrid();
+//        printGrid();
         return getBestShot();
     }
 
