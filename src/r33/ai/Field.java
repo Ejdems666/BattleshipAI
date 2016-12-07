@@ -24,10 +24,6 @@ public class Field {
         hits[position.x][position.y] = hit ? 2 : 1;
     }
 
-    public boolean isHit(int x, int y, int allowedHitTypes) {
-        return hits[x][y] <= allowedHitTypes && hits[x][y] > 0;
-    }
-
     public int getX() {
         return x;
     }
@@ -42,5 +38,9 @@ public class Field {
 
     public void setLastShot(Position lastShot) {
         this.lastShot = lastShot;
+    }
+
+    public int getHit(int x, int y) {
+        return hits[x][y];
     }
 }

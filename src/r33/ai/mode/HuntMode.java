@@ -11,8 +11,6 @@ import java.util.*;
  * Created by Ejdems on 06/12/2016.
  */
 public class HuntMode extends FieldScanner implements Mode {
-    private int parityCheck = 0;
-
     public HuntMode(Field field) {
         this.field = field;
     }
@@ -32,45 +30,18 @@ public class HuntMode extends FieldScanner implements Mode {
             for (int x = 0; x < field.getX(); x++) {
                 for (int y = 0; y < field.getY(); y++) {
                     if (ship.size() + y <= field.getX()) {
-                        placeShipVerticaly(ship, x, y,Field.HIT);
+                        placeShipVerticaly(ship, x, y);
                     }
                     if (ship.size() + x <= field.getX()) {
-                        placeShipHorizontaly(ship, y, x,Field.HIT);
+                        placeShipHorizontaly(ship, y, x);
                     }
                 }
             }
         }
     }
 
-    private Position getBestShot() {
-        int bestShotValue = getBestShotValue();
-        return getBestParityShot(bestShotValue);
-    }
-
-    private Position getBestParityShot(int bestShotValue) {
-        ArrayList<Position> bestShotPositions = new ArrayList<>();
-        for (int x = 0; x < field.getX(); x++) {
-            for (int y = 0; y < field.getY(); y++) {
-                if (grid[x][y] == bestShotValue) {
-                    bestShotPositions.add(new Position(x, y));
-                }
-            }
-        }
-        if (bestShotPositions.size() > 1) {
-            for (Position bestShotPosition : bestShotPositions) {
-                if (positionIsInParity(bestShotPosition)) {
-                    return bestShotPosition;
-                }
-            }
-        }
-        return bestShotPositions.get(0);
-    }
-
-    private boolean positionIsInParity(Position bestShotPosition) {
-        return Math.abs(bestShotPosition.x - bestShotPosition.y) % 2 == parityCheck;
-    }
-
-    private int getBestShotValue() {
+    @Override
+    protected int getBestShotValue() {
         int bestShotValue = 0;
         for (int x = 0; x < field.getX(); x++) {
             for (int y = 0; y < field.getY(); y++) {
@@ -80,5 +51,10 @@ public class HuntMode extends FieldScanner implements Mode {
             }
         }
         return bestShotValue;
+    }
+
+    @Override
+    protected boolean isHit(int x, int y) {
+        return field.getHit(x,y) == Field.HIT || field.getHit(x,y) == Field.SHIP_HIT;
     }
 }

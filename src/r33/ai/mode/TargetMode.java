@@ -21,7 +21,7 @@ public class TargetMode extends FieldScanner implements Mode {
         grid = new int[field.getX()][field.getY()];
         scanGrid(enemyShips);
         printGrid();
-        return null;
+        return getBestShot();
     }
 
     private void scanGrid(Fleet enemyShips) {
@@ -29,21 +29,17 @@ public class TargetMode extends FieldScanner implements Mode {
         Position base = field.getLastShot();
         for (int i = 0; i < enemyShips.getNumberOfShips(); i++) {
             ship = enemyShips.getShip(i);
-            for (int y = getStartIndex(base.y,ship); y < getEndIndex(base.y,ship); y++) {
-                placeShipVerticaly(ship,base.x,y,Field.SHIP_HIT);
+            for (int y = getStartIndex(base.y,ship); y <= base.y; y++) {
+                if (ship.size() + y <= field.getY()) {
+                    placeShipVerticaly(ship, base.x, y);
+                }
             }
-            for (int x = getStartIndex(base.x,ship); x < getEndIndex(base.x,ship); x++) {
-                placeShipHorizontaly(ship,base.y,x,Field.SHIP_HIT);
+            for (int x = getStartIndex(base.x,ship); x <= base.x; x++) {
+                if (ship.size() + x <= field.getX()) {
+                    placeShipHorizontaly(ship, base.y, x);
+                }
             }
         }
-    }
-
-    private double getEndIndex(int baseIndex, Ship ship) {
-        int index = baseIndex + ship.size() - 1;
-        if(index > field.getY()) {
-            return field.getY();
-        }
-        return index;
     }
 
     private int getStartIndex(int baseIndex, Ship ship) {
@@ -55,7 +51,30 @@ public class TargetMode extends FieldScanner implements Mode {
     }
 
     public boolean hadSafelySunk(Fleet enemyShips) {
+        return enemyShips.getNumberOfShips() < this.enemyShips.getNumberOfShips();
         // TODO: check for touching ships strategy ("L" or "T" shape)
-        return true;
+//        return true;
+    }
+
+    @Override
+    protected boolean isHit(int x, int y) {
+        return field.getHit(x,y) == Field.HIT;
+    }
+
+    @Override
+    protected int getBestShotValue() {
+        int bestShotValue = 0;
+        for (int x = 0; x < field.getX(); x++) {
+            for (int y = 0; y < field.getY(); y++) {
+                if (grid[x][y] > bestShotValue && notBasePosition(x, y)) {
+                    bestShotValue = grid[x][y];
+                }
+            }
+        }
+        return bestShotValue;
+    }
+
+    private boolean notBasePosition(int x, int y) {
+        return field.getLastShot().compareTo(new Position(x,y)) != 0;
     }
 }
