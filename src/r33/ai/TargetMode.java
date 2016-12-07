@@ -8,9 +8,11 @@ import battleship.interfaces.Position;
  */
 public class TargetMode implements Mode {
     private Fleet enemyShips;
+    private Field field;
 
-    public TargetMode(Fleet enemyShips) {
+    public TargetMode(Fleet enemyShips, Field field) {
         this.enemyShips = enemyShips;
+        this.field = field;
     }
 
     @Override

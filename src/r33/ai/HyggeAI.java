@@ -11,7 +11,8 @@ import battleship.interfaces.Position;
 public class HyggeAI implements BattleshipsPlayer {
     private HuntMode[] huntModes;
     private Mode currentMode;
-    private int round;
+    private Field field;
+    private int currentRound;
     private int sizeX;
     private int sizeY;
 
@@ -24,8 +25,9 @@ public class HyggeAI implements BattleshipsPlayer {
 
     @Override
     public void startRound(int round) {
-        huntModes[round] = new HuntMode(sizeX, sizeY);
-        this.round = round;
+        field = new Field(sizeX,sizeY);
+        huntModes[round] = new HuntMode(field);
+        this.currentRound = round;
         currentMode = huntModes[round];
     }
 
@@ -48,13 +50,13 @@ public class HyggeAI implements BattleshipsPlayer {
 
     @Override
     public void hitFeedBack(boolean hit, Fleet enemyShips) {
-//        if (hit) {
-//            if (currentMode instanceof HuntMode) {
-//                currentMode = new TargetMode(enemyShips);
-//            } else if (((TargetMode) currentMode).hadSafelySunk(enemyShips)) {
-//                currentMode = huntModes[round];
-//            }
-//        }
+        if (hit) {
+            if (currentMode instanceof HuntMode) {
+                currentMode = new TargetMode(enemyShips,field);
+            } else if (((TargetMode) currentMode).hadSafelySunk(enemyShips)) {
+                currentMode = huntModes[currentRound];
+            }
+        }
     }
 
     @Override
