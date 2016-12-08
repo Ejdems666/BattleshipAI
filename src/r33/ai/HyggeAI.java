@@ -28,9 +28,12 @@ public class HyggeAI implements BattleshipsPlayer {
 
     @Override
     public void startRound(int round) {
+        init(--round);
+    }
+    private void init(int round) {
         field = new Field(sizeX,sizeY);
         huntModes[round] = new HuntMode(field);
-        this.currentRound = round;
+        currentRound = round;
         currentMode = huntModes[round];
     }
 
@@ -55,19 +58,20 @@ public class HyggeAI implements BattleshipsPlayer {
 
     @Override
     public void hitFeedBack(boolean hit, Fleet enemyShips) {
-        field.registerHit(field.getLastShot(),hit);
+        field.registerHit(hit);
         if (hit) {
             if (currentMode instanceof HuntMode) {
                 currentMode = new TargetMode(field);
             } else if (((TargetMode) currentMode).hadSafelySunk(enemyShips)) {
                 currentMode = huntModes[currentRound];
+            } else {
+                ((TargetMode) currentMode).setBaseHit(field.getLastShot());
             }
         }
     }
 
     @Override
     public void endRound(int round, int points, int enemyPoints) {
-
     }
 
     @Override

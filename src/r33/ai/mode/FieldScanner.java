@@ -13,26 +13,28 @@ public abstract class FieldScanner {
     protected Field field;
     private int parityCheck = 0;
 
-    protected void placeShipVerticaly(Ship ship, int x, int y) {
+    protected boolean canPlaceShipVertically(Ship ship, int x, int y) {
+        if(ship.size() + y > field.getY()) {
+            return false;
+        }
         for (int l = y; l < ship.size() + y; l++) {
             if (isHit(x,l)) {
-                return;
+                return false;
             }
         }
-        for (int l = y; l < ship.size() + y; l++) {
-            grid[x][l] += 1;
-        }
+        return true;
     }
 
-    protected void placeShipHorizontaly(Ship ship, int y, int x) {
+    protected boolean canPlaceShipHorizontally(Ship ship, int x, int y) {
+        if(ship.size() + x > field.getX()) {
+            return false;
+        }
         for (int l = x; l < ship.size() + x; l++) {
             if (isHit(l,y)) {
-                return;
+                return false;
             }
         }
-        for (int l = x; l < ship.size() + x; l++) {
-            grid[l][y] += 1;
-        }
+        return true;
     }
 
     protected void printGrid() {
@@ -52,21 +54,35 @@ public abstract class FieldScanner {
     protected abstract boolean isHit(int x, int y);
 
     protected Position getBestShot() {
-        int bestShotValue = getBestShotValue();
-        return getBestParityShot(bestShotValue);
+        int bestProbabilityValue = getBestProbabilityValue();
+        ArrayList<Position> bestShotPositions = getBestShotPositions(bestProbabilityValue);
+        return getBestShotPositionByParity(bestShotPositions);
+    }
+    private int getBestProbabilityValue() {
+        int bestShotValue = 0;
+        for (int x = 0; x < field.getX(); x++) {
+            for (int y = 0; y < field.getY(); y++) {
+                if (grid[x][y] > bestShotValue) {
+                    bestShotValue = grid[x][y];
+                }
+            }
+        }
+        return bestShotValue;
     }
 
-    protected abstract int getBestShotValue();
-
-    private Position getBestParityShot(int bestShotValue) {
+    private ArrayList<Position> getBestShotPositions(int bestProbabilityValue) {
         ArrayList<Position> bestShotPositions = new ArrayList<>();
         for (int x = 0; x < field.getX(); x++) {
             for (int y = 0; y < field.getY(); y++) {
-                if (grid[x][y] == bestShotValue) {
+                if (grid[x][y] == bestProbabilityValue) {
                     bestShotPositions.add(new Position(x, y));
                 }
             }
         }
+        return bestShotPositions;
+    }
+
+    private Position getBestShotPositionByParity(ArrayList<Position> bestShotPositions) {
         if (bestShotPositions.size() > 1) {
             for (Position bestShotPosition : bestShotPositions) {
                 if (positionIsInParity(bestShotPosition)) {
@@ -76,7 +92,7 @@ public abstract class FieldScanner {
         }
         return bestShotPositions.get(0);
     }
-
+    // Position is in "black" or "white" field
     private boolean positionIsInParity(Position bestShotPosition) {
         return Math.abs(bestShotPosition.x - bestShotPosition.y) % 2 == parityCheck;
     }
