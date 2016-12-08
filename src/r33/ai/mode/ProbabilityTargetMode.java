@@ -9,12 +9,12 @@ import java.util.ArrayList;
 /**
  * Created by Ejdems on 06/12/2016.
  */
-public class TargetMode extends FieldScanner implements Mode {
+public class ProbabilityTargetMode extends FieldScanner implements Mode {
     private ArrayList<Ship> previousShips;
     private ArrayList<Position> shotPositions;
     private Position baseHit;
 
-    public TargetMode(Field field) {
+    public ProbabilityTargetMode(Field field) {
         this.field = field;
         baseHit = field.getLastShot();
         shotPositions = new ArrayList<>();

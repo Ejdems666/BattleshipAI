@@ -30,7 +30,11 @@ public abstract class FieldScanner {
     protected Position getBestShot() {
         int bestProbabilityValue = getBestProbabilityValue();
         ArrayList<Position> bestShotPositions = getBestShotPositions(bestProbabilityValue);
-        return getBestShotPositionByParity(bestShotPositions);
+        if(parityCheck >= 0) {
+            return getBestShotPositionByParity(bestShotPositions);
+        } else {
+            return bestShotPositions.get(0);
+        }
     }
     private int getBestProbabilityValue() {
         int bestShotValue = 0;
@@ -69,5 +73,9 @@ public abstract class FieldScanner {
     // Position is in "black" or "white" field
     private boolean positionIsInParity(Position bestShotPosition) {
         return Math.abs(bestShotPosition.x - bestShotPosition.y) % 2 == parityCheck;
+    }
+
+    public void setParityCheck(int parityCheck) {
+        this.parityCheck = parityCheck;
     }
 }

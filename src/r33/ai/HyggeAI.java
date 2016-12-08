@@ -6,7 +6,7 @@ import battleship.interfaces.Fleet;
 import battleship.interfaces.Position;
 import r33.ai.mode.HuntMode;
 import r33.ai.mode.Mode;
-import r33.ai.mode.TargetMode;
+import r33.ai.mode.ProbabilityTargetMode;
 
 /**
  * Created by Ejdems on 05/12/2016.
@@ -61,9 +61,9 @@ public class HyggeAI implements BattleshipsPlayer {
         field.registerHit(hit);
         if (hit) {
             if (currentMode instanceof HuntMode) {
-                currentMode = new TargetMode(field);
+                currentMode = new ProbabilityTargetMode(field);
             } else {
-                TargetMode targetMode = ((TargetMode) currentMode);
+                ProbabilityTargetMode targetMode = ((ProbabilityTargetMode) currentMode);
                 targetMode.registerHit(field.getLastShot());
                 if (targetMode.hadSunk(enemyShips)) {
                     currentMode = huntModes[currentRound];
