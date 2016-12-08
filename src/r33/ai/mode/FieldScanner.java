@@ -13,30 +13,6 @@ public abstract class FieldScanner {
     protected Field field;
     private int parityCheck = 0;
 
-    protected boolean canPlaceShipVertically(Ship ship, int x, int y) {
-        if(ship.size() + y > field.getY()) {
-            return false;
-        }
-        for (int l = y; l < ship.size() + y; l++) {
-            if (isHit(x,l)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    protected boolean canPlaceShipHorizontally(Ship ship, int x, int y) {
-        if(ship.size() + x > field.getX()) {
-            return false;
-        }
-        for (int l = x; l < ship.size() + x; l++) {
-            if (isHit(l,y)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     protected void printGrid() {
         for (int xx = 0; xx < field.getX(); xx++) {
             System.out.println("");
@@ -50,8 +26,6 @@ public abstract class FieldScanner {
         }
         System.out.println("\n----------------------------------------\n");
     }
-
-    protected abstract boolean isHit(int x, int y);
 
     protected Position getBestShot() {
         int bestProbabilityValue = getBestProbabilityValue();

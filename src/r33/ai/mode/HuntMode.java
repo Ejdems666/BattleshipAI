@@ -37,6 +37,31 @@ public class HuntMode extends FieldScanner implements Mode {
             }
         }
     }
+    private boolean canPlaceShipVertically(Ship ship, int x, int y) {
+        if(ship.size() + y > field.getY()) {
+            return false;
+        }
+        for (int l = y; l < ship.size() + y; l++) {
+            if (isHit(x,l)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    private boolean isHit(int x, int y) {
+        return field.getHit(x,y) != Field.NO_HIT;
+    }
+    private boolean canPlaceShipHorizontally(Ship ship, int x, int y) {
+        if(ship.size() + x > field.getX()) {
+            return false;
+        }
+        for (int l = x; l < ship.size() + x; l++) {
+            if (isHit(l,y)) {
+                return false;
+            }
+        }
+        return true;
+    }
     private void stampShipsProbabilityInGridVertically(Ship ship, int x, int y) {
         for (int l = y; l < ship.size() + y; l++) {
             grid[x][l] += 1;
@@ -46,10 +71,5 @@ public class HuntMode extends FieldScanner implements Mode {
         for (int l = x; l < ship.size() + x; l++) {
             grid[l][y] += 1;
         }
-    }
-
-    @Override
-    protected boolean isHit(int x, int y) {
-        return field.getHit(x,y) != Field.NO_HIT;
     }
 }

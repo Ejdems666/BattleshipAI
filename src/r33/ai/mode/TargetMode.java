@@ -4,26 +4,34 @@ import battleship.interfaces.Fleet;
 import battleship.interfaces.Position;
 import battleship.interfaces.Ship;
 import r33.ai.Field;
+import java.util.ArrayList;
 
 /**
  * Created by Ejdems on 06/12/2016.
  */
 public class TargetMode extends FieldScanner implements Mode {
-    private int enemyFleetSize;
+    private ArrayList<Ship> previousShips;
+    private ArrayList<Position> shotPositions;
     private Position baseHit;
 
     public TargetMode(Field field) {
         this.field = field;
         baseHit = field.getLastShot();
+        shotPositions = new ArrayList<>();
     }
 
     @Override
     public Position getShot(Fleet enemyShips) {
-        // TODO: copy for L and T shape check
-        this.enemyFleetSize = enemyShips.getNumberOfShips();
+        storeFleetData(enemyShips);
         grid = new int[field.getX()][field.getY()];
         scanGrid(enemyShips);
         return getBestShot();
+    }
+    private void storeFleetData(Fleet enemyShips) {
+        previousShips = new ArrayList<>();
+        for (int i = 0; i < enemyShips.getNumberOfShips(); i++) {
+            previousShips.add(enemyShips.getShip(i));
+        }
     }
 
     private void scanGrid(Fleet enemyShips) {
@@ -41,6 +49,31 @@ public class TargetMode extends FieldScanner implements Mode {
                 }
             }
         }
+    }
+    private boolean canPlaceShipVertically(Ship ship, int x, int y) {
+        if(ship.size() + y > field.getY()) {
+            return false;
+        }
+        for (int l = y; l < ship.size() + y; l++) {
+            if (isHit(x,l)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    private boolean isHit(int x, int y) {
+        return field.getHit(x, y) == Field.HIT;
+    }
+    private boolean canPlaceShipHorizontally(Ship ship, int x, int y) {
+        if(ship.size() + x > field.getX()) {
+            return false;
+        }
+        for (int l = x; l < ship.size() + x; l++) {
+            if (isHit(l,y)) {
+                return false;
+            }
+        }
+        return true;
     }
     private int getStartIndex(int baseIndex, Ship ship) {
         int index = baseIndex - ship.size() + 1;
@@ -67,18 +100,37 @@ public class TargetMode extends FieldScanner implements Mode {
         return field.getHit(x,y) == Field.NO_HIT;
     }
 
-    public boolean hadSafelySunk(Fleet enemyShips) {
-        return enemyShips.getNumberOfShips() < this.enemyFleetSize;
-        // TODO: check for touching ships strategy ("L" or "T" shape)
-//        return true;
+    public boolean hadSunk(Fleet enemyShips) {
+        return enemyShips.getNumberOfShips() < previousShips.size();
     }
-
-    @Override
-    protected boolean isHit(int x, int y) {
-        return field.getHit(x, y) == Field.HIT;
+    public boolean hadSafelySunk(Fleet enemyShips) {
+        Ship shotShip = null;
+        for (int i = 0; i < enemyShips.getNumberOfShips(); i++) {
+            if(previousShips.indexOf(enemyShips.getShip(i)) < 0) {
+                shotShip = enemyShips.getShip(i);
+            }
+        }
+        if (shotShip == null) {
+            return false;
+        }
+        return true;
+//        if(shotPositions.size() != shotShip.size()) {
+//            Position lastShot = shotPositions.get(shotShip.size()-1);
+//        }
     }
 
     public void setBaseHit(Position baseHit) {
         this.baseHit = baseHit;
+    }
+
+    public void registerHit(Position position) {
+        if(isInLineWithBase(position)) {
+
+        }
+        shotPositions.add(position);
+    }
+
+    private boolean isInLineWithBase(Position position) {
+        return position.x == baseHit.x || position.y == baseHit.y;
     }
 }

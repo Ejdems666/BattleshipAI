@@ -62,10 +62,15 @@ public class HyggeAI implements BattleshipsPlayer {
         if (hit) {
             if (currentMode instanceof HuntMode) {
                 currentMode = new TargetMode(field);
-            } else if (((TargetMode) currentMode).hadSafelySunk(enemyShips)) {
-                currentMode = huntModes[currentRound];
             } else {
-                ((TargetMode) currentMode).setBaseHit(field.getLastShot());
+                TargetMode targetMode = ((TargetMode) currentMode);
+                targetMode.registerHit(field.getLastShot());
+                if (targetMode.hadSunk(enemyShips)) {
+                    currentMode = huntModes[currentRound];
+                }
+                else {
+                    targetMode.setBaseHit(field.getLastShot());
+                }
             }
         }
     }
