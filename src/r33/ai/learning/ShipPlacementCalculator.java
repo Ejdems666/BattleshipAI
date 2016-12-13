@@ -17,10 +17,10 @@ public class ShipPlacementCalculator {
         mergedHeatMaps = new int[sizeX][sizeX];
     }
 
-    public void addHeatMap(HeatMap heatMap) {
+    public void addEnemyShots(EnemyShots EnemyShots) {
         for (int x = 0; x < sizeX; x++) {
             for (int y = 0; y < sizeY; y++) {
-                mergedHeatMaps[x][y] += heatMap.getCellValue(x, y);
+                mergedHeatMaps[x][y] += EnemyShots.getCellValue(x, y);
             }
         }
     }

@@ -3,20 +3,20 @@ package r33.ai.mode;
 import battleship.interfaces.Fleet;
 import battleship.interfaces.Position;
 import battleship.interfaces.Ship;
-import r33.ai.Field;
+import r33.ai.MyShots;
 
 /**
  * Created by Ejdems on 06/12/2016.
  */
 public class HuntMode extends BestShotCalculator implements Mode {
-    public HuntMode(Field field, ParityCalculator parityCalculator) {
+    public HuntMode(MyShots myShots, ParityCalculator parityCalculator) {
         super(parityCalculator);
-        this.field = field;
+        this.myShots = myShots;
     }
 
     @Override
     public Position getShot(Fleet enemyShips) {
-        grid = new int[field.getX()][field.getY()];
+        grid = new int[myShots.getX()][myShots.getY()];
         scanGrid(enemyShips);
         return getBestShot();
     }
@@ -27,8 +27,8 @@ public class HuntMode extends BestShotCalculator implements Mode {
         }
     }
     private void calculateShipsProbabilityInGrid(Ship ship) {
-        for (int x = 0; x < field.getX(); x++) {
-            for (int y = 0; y < field.getY(); y++) {
+        for (int x = 0; x < myShots.getX(); x++) {
+            for (int y = 0; y < myShots.getY(); y++) {
                 if (canPlaceShipVertically(ship, x, y)) {
                     stampShipsProbabilityInGridVertically(ship, x, y);
                 }if (canPlaceShipHorizontally(ship, x, y)) {
@@ -38,7 +38,7 @@ public class HuntMode extends BestShotCalculator implements Mode {
         }
     }
     private boolean canPlaceShipVertically(Ship ship, int x, int y) {
-        if(ship.size() + y > field.getY()) {
+        if(ship.size() + y > myShots.getY()) {
             return false;
         }
         for (int l = y; l < ship.size() + y; l++) {
@@ -49,10 +49,10 @@ public class HuntMode extends BestShotCalculator implements Mode {
         return true;
     }
     private boolean wasShot(int x, int y) {
-        return field.getHit(x,y) != Field.NO_HIT;
+        return myShots.getHit(x,y) != MyShots.NO_HIT;
     }
     private boolean canPlaceShipHorizontally(Ship ship, int x, int y) {
-        if(ship.size() + x > field.getX()) {
+        if(ship.size() + x > myShots.getX()) {
             return false;
         }
         for (int l = x; l < ship.size() + x; l++) {

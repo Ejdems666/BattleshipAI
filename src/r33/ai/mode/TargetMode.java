@@ -3,7 +3,7 @@ package r33.ai.mode;
 import battleship.interfaces.Fleet;
 import battleship.interfaces.Position;
 import battleship.interfaces.Ship;
-import r33.ai.Field;
+import r33.ai.MyShots;
 
 import java.util.*;
 
@@ -15,16 +15,16 @@ public class TargetMode extends BestShotCalculator implements Mode {
     private ArrayList<Ship> sankShips = new ArrayList<>();
     private ArrayList<Position> hitPositions = new ArrayList<>();
 
-    public TargetMode(Field field, ParityCalculator parityCalculator, Position baseHit) {
+    public TargetMode(MyShots myShots, ParityCalculator parityCalculator) {
         super(parityCalculator);
-        this.field = field;
-        hitPositions.add(baseHit);
+        this.myShots = myShots;
+        hitPositions.add(myShots.getLastShot());
     }
 
     @Override
     public Position getShot(Fleet enemyShips) {
         previousShips = copyFleet(enemyShips);
-        grid = new int[field.getX()][field.getY()];
+        grid = new int[myShots.getX()][myShots.getY()];
         scanGrid(enemyShips);
         return getBestShot();
     }
@@ -63,7 +63,7 @@ public class TargetMode extends BestShotCalculator implements Mode {
         return index;
     }
     private boolean canPlaceShipVertically(Ship ship, int x, int y) {
-        if(ship.size() + y > field.getY()) {
+        if(ship.size() + y > myShots.getY()) {
             return false;
         }
         for (int l = y; l < ship.size() + y; l++) {
@@ -74,7 +74,7 @@ public class TargetMode extends BestShotCalculator implements Mode {
         return true;
     }
     private boolean wasShotBefore(int x, int y) {
-        return field.getHit(x,y) == Field.MISS || field.getHit(x,y) == Field.HIT_SUNK;
+        return myShots.getHit(x,y) == MyShots.MISS || myShots.getHit(x,y) == MyShots.HIT_SUNK;
     }
     private void stampShipsProbabilityInGridVertically(Ship ship, int x, int y) {
         for (int l = y; l < ship.size() + y; l++) {
@@ -84,10 +84,10 @@ public class TargetMode extends BestShotCalculator implements Mode {
         }
     }
     private boolean wasNoHit(int x, int y) {
-        return field.getHit(x,y) == Field.NO_HIT;
+        return myShots.getHit(x,y) == MyShots.NO_HIT;
     }
     private boolean canPlaceShipHorizontally(Ship ship, int x, int y) {
-        if(ship.size() + x > field.getX()) {
+        if(ship.size() + x > myShots.getX()) {
             return false;
         }
         for (int l = x; l < ship.size() + x; l++) {

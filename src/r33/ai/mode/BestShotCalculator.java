@@ -1,7 +1,6 @@
 package r33.ai.mode;
 import battleship.interfaces.Position;
-import battleship.interfaces.Ship;
-import r33.ai.Field;
+import r33.ai.MyShots;
 
 import java.util.ArrayList;
 
@@ -10,7 +9,7 @@ import java.util.ArrayList;
  */
 public abstract class BestShotCalculator {
     protected int[][] grid;
-    protected Field field;
+    protected MyShots myShots;
     protected final ParityCalculator parityCalculator;
 
     public BestShotCalculator(ParityCalculator parityCalculator) {
@@ -18,9 +17,9 @@ public abstract class BestShotCalculator {
     }
 
     public void printGrid() {
-        for (int yy = field.getY()-1; yy >= 0; yy--) {
+        for (int yy = myShots.getY()-1; yy >= 0; yy--) {
             System.out.print(yy + " ");
-            for (int xx = 0; xx < field.getX(); xx++) {
+            for (int xx = 0; xx < myShots.getX(); xx++) {
                 if (grid[xx][yy] < 10) {
                     System.out.print(" |" + grid[xx][yy] + " | ");
                 } else {
@@ -31,7 +30,7 @@ public abstract class BestShotCalculator {
         }
         System.out.println("-----------------------------------------------------------------------------");
         System.out.print("   ");
-        for (int xx = 0; xx < field.getX(); xx++) {
+        for (int xx = 0; xx < myShots.getX(); xx++) {
             System.out.print(" "+xx+"    ");
         }
         System.out.println("\n----------------------------------------\n");
@@ -44,8 +43,8 @@ public abstract class BestShotCalculator {
     }
     private int getBestProbabilityValue() {
         int bestShotValue = 0;
-        for (int x = 0; x < field.getX(); x++) {
-            for (int y = 0; y < field.getY(); y++) {
+        for (int x = 0; x < myShots.getX(); x++) {
+            for (int y = 0; y < myShots.getY(); y++) {
                 if (grid[x][y] > bestShotValue) {
                     bestShotValue = grid[x][y];
                 }
@@ -56,8 +55,8 @@ public abstract class BestShotCalculator {
 
     private ArrayList<Position> getBestShotPositions(int bestProbabilityValue) {
         ArrayList<Position> bestShotPositions = new ArrayList<>();
-        for (int x = 0; x < field.getX(); x++) {
-            for (int y = 0; y < field.getY(); y++) {
+        for (int x = 0; x < myShots.getX(); x++) {
+            for (int y = 0; y < myShots.getY(); y++) {
                 if (grid[x][y] == bestProbabilityValue) {
                     bestShotPositions.add(new Position(x, y));
                 }

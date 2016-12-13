@@ -4,17 +4,17 @@ import battleship.interfaces.BattleshipsPlayer;
 import battleship.interfaces.Board;
 import battleship.interfaces.Fleet;
 import battleship.interfaces.Position;
-import r33.ai.learning.HeatMap;
+import r33.ai.learning.EnemyShots;
 import r33.ai.mode.*;
 
 /**
  * Created by Ejdems on 05/12/2016.
  */
 public class HyggeAI implements BattleshipsPlayer {
-    private HuntMode[] huntModes;
+    private HuntMode huntMode;
     private Mode currentMode;
-    private HeatMap[] heatMaps;
-    private Field field;
+    private EnemyShots[] EnemyShots;
+    private MyShots[] myShots;
     private ParityCalculator parityCalculator;
     private int currentRound;
     private int sizeX;
@@ -22,8 +22,8 @@ public class HyggeAI implements BattleshipsPlayer {
 
     @Override
     public void startMatch(int rounds, Fleet ships, int sizeX, int sizeY) {
-        huntModes = new HuntMode[rounds];
-        heatMaps = new HeatMap[rounds];
+        myShots = new MyShots[rounds];
+        EnemyShots = new EnemyShots[rounds];
         this.sizeX = sizeX;
         this.sizeY = sizeY;
         parityCalculator = new ParityCalculator(0);
@@ -31,14 +31,11 @@ public class HyggeAI implements BattleshipsPlayer {
 
     @Override
     public void startRound(int round) {
-        init(--round);
-    }
-    private void init(int round) {
-        heatMaps[round] = new HeatMap(sizeX,sizeY);
-        field = new Field(sizeX,sizeY);
-        huntModes[round] = new HuntMode(field,parityCalculator);
+        EnemyShots[round] = new EnemyShots(sizeX,sizeY);
+        myShots[round] = new MyShots(sizeX,sizeY);
+        huntMode = new HuntMode(myShots[round],parityCalculator);
         currentRound = round;
-        currentMode = huntModes[round];
+        currentMode = huntMode;
     }
 
     @Override
@@ -52,29 +49,29 @@ public class HyggeAI implements BattleshipsPlayer {
 
     @Override
     public void incoming(Position pos) {
-        heatMaps[currentRound].registerEnemyShot(pos);
+        EnemyShots[currentRound].registerEnemyShot(pos);
     }
 
     @Override
     public Position getFireCoordinates(Fleet enemyShips) {
         Position shot = currentMode.getShot(enemyShips);
-        field.setLastShot(shot);
+        myShots[currentRound].setLastShot(shot);
         return shot;
     }
 
     @Override
     public void hitFeedBack(boolean hit, Fleet enemyShips) {
-        field.registerHit(hit);
+        myShots[currentRound].registerHit(hit);
 //        ((BestShotCalculator) currentMode).printGrid();
         if (hit) {
             if (currentMode instanceof HuntMode) {
-                currentMode = new TargetMode(field,parityCalculator,field.getLastShot());
+                currentMode = new TargetMode(myShots[currentRound],parityCalculator);
             } else {
                 TargetMode targetMode = ((TargetMode) currentMode);
-                targetMode.registerHit(field.getLastShot());
+                targetMode.registerHit(myShots[currentRound].getLastShot());
                 if (targetMode.hadSafelySunk(enemyShips)) {
-                    field.reStampSunkPositions(targetMode.getHitPositions());
-                    currentMode = huntModes[currentRound];
+                    myShots[currentRound].reStampSunkPositions(targetMode.getHitPositions());
+                    currentMode = huntMode;
                 }
             }
         }

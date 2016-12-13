@@ -3,12 +3,10 @@ package r33.ai;
 import battleship.interfaces.Position;
 
 import java.util.List;
-import java.util.Set;
-
 /**
  * Created by Ejdems on 07/12/2016.
  */
-public class Field {
+public class MyShots {
     private int[][] hits;
     private Position lastShot;
     private final int x;
@@ -19,7 +17,7 @@ public class Field {
     public static final int HIT_NOT_SUNK = 2;
     public static final int HIT_SUNK = 3;
 
-    public Field(int x, int y) {
+    public MyShots(int x, int y) {
         hits = new int[x][y];
         this.x = x;
         this.y = y;

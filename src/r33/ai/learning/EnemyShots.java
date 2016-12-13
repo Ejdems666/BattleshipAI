@@ -5,11 +5,11 @@ import battleship.interfaces.Position;
 /**
  * Created by Ejdems on 13/12/2016.
  */
-public class HeatMap {
+public class EnemyShots {
     private int[][] heatMap;
     private int value;
 
-    public HeatMap(int x, int y) {
+    public EnemyShots(int x, int y) {
         heatMap = new int[x][y];
         value = x*y;
     }
