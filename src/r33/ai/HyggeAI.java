@@ -4,17 +4,16 @@ import battleship.interfaces.BattleshipsPlayer;
 import battleship.interfaces.Board;
 import battleship.interfaces.Fleet;
 import battleship.interfaces.Position;
+import r33.ai.learning.HeatMap;
 import r33.ai.mode.*;
-
-import java.util.ArrayList;
 
 /**
  * Created by Ejdems on 05/12/2016.
  */
 public class HyggeAI implements BattleshipsPlayer {
     private HuntMode[] huntModes;
-    private ArrayList<TargetMode> queueTargetModes = new ArrayList<>();
     private Mode currentMode;
+    private HeatMap[] heatMaps;
     private Field field;
     private ParityCalculator parityCalculator;
     private int currentRound;
@@ -24,9 +23,9 @@ public class HyggeAI implements BattleshipsPlayer {
     @Override
     public void startMatch(int rounds, Fleet ships, int sizeX, int sizeY) {
         huntModes = new HuntMode[rounds];
+        heatMaps = new HeatMap[rounds];
         this.sizeX = sizeX;
         this.sizeY = sizeY;
-        // TODO: change parity based on enemy's ship positioning
         parityCalculator = new ParityCalculator(0);
     }
 
@@ -35,6 +34,7 @@ public class HyggeAI implements BattleshipsPlayer {
         init(--round);
     }
     private void init(int round) {
+        heatMaps[round] = new HeatMap(sizeX,sizeY);
         field = new Field(sizeX,sizeY);
         huntModes[round] = new HuntMode(field,parityCalculator);
         currentRound = round;
@@ -52,7 +52,7 @@ public class HyggeAI implements BattleshipsPlayer {
 
     @Override
     public void incoming(Position pos) {
-
+        heatMaps[currentRound].registerEnemyShot(pos);
     }
 
     @Override
