@@ -65,24 +65,16 @@ public class HyggeAI implements BattleshipsPlayer {
     @Override
     public void hitFeedBack(boolean hit, Fleet enemyShips) {
         field.registerHit(hit);
-        ((BestShotCalculator) currentMode).printGrid();
+//        ((BestShotCalculator) currentMode).printGrid();
         if (hit) {
             if (currentMode instanceof HuntMode) {
                 currentMode = new TargetMode(field,parityCalculator,field.getLastShot());
             } else {
                 TargetMode targetMode = ((TargetMode) currentMode);
                 targetMode.registerHit(field.getLastShot());
-                if (targetMode.hadSunk(enemyShips)) {
-                    if(targetMode.didShotDifferentShips(enemyShips)) {
-                        for (Position baseHit : targetMode.getOtherShipsHitFragments()) {
-                            queueTargetModes.add(new TargetMode(field,parityCalculator,baseHit));
-                        }
-                    }
-                    if(queueTargetModes.size() > 0) {
-                        currentMode = queueTargetModes.remove(0);
-                    } else {
-                        currentMode = huntModes[currentRound];
-                    }
+                if (targetMode.hadSafelySunk(enemyShips)) {
+                    field.reStampSunkPositions(targetMode.getHitPositions());
+                    currentMode = huntModes[currentRound];
                 }
             }
         }

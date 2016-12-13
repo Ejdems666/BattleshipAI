@@ -2,6 +2,7 @@ package r33.ai;
 
 import battleship.interfaces.Position;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -64,7 +65,7 @@ public class Field {
         System.out.println("\n----------------------------------------\n");
     }
 
-    public void reStampSunkPositions(Set<Position> positions) {
+    public void reStampSunkPositions(List<Position> positions) {
         for (Position position : positions) {
             hits[position.x][position.y] = HIT_SUNK;
         }
