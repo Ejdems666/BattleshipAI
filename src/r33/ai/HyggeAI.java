@@ -4,17 +4,19 @@ import battleship.interfaces.BattleshipsPlayer;
 import battleship.interfaces.Board;
 import battleship.interfaces.Fleet;
 import battleship.interfaces.Position;
-import r33.ai.mode.HuntMode;
-import r33.ai.mode.Mode;
-import r33.ai.mode.ProbabilityTargetMode;
+import r33.ai.mode.*;
+
+import java.util.ArrayList;
 
 /**
  * Created by Ejdems on 05/12/2016.
  */
 public class HyggeAI implements BattleshipsPlayer {
     private HuntMode[] huntModes;
+    private ArrayList<TargetMode> queueTargetModes = new ArrayList<>();
     private Mode currentMode;
     private Field field;
+    private ParityCalculator parityCalculator;
     private int currentRound;
     private int sizeX;
     private int sizeY;
@@ -24,6 +26,8 @@ public class HyggeAI implements BattleshipsPlayer {
         huntModes = new HuntMode[rounds];
         this.sizeX = sizeX;
         this.sizeY = sizeY;
+        // TODO: change parity based on enemy's ship positioning
+        parityCalculator = new ParityCalculator(0);
     }
 
     @Override
@@ -32,16 +36,18 @@ public class HyggeAI implements BattleshipsPlayer {
     }
     private void init(int round) {
         field = new Field(sizeX,sizeY);
-        huntModes[round] = new HuntMode(field);
+        huntModes[round] = new HuntMode(field,parityCalculator);
         currentRound = round;
         currentMode = huntModes[round];
     }
 
     @Override
     public void placeShips(Fleet fleet, Board board) {
-        for (int i = 0; i < fleet.getNumberOfShips(); i++) {
-            board.placeShip(new Position(0, i), fleet.getShip(i), false);
-        }
+        board.placeShip(new Position(4,9),fleet.getShip(0),false);
+        board.placeShip(new Position(1,4),fleet.getShip(1),false);
+        board.placeShip(new Position(4,4),fleet.getShip(2),false);
+        board.placeShip(new Position(3,5),fleet.getShip(3),false);
+        board.placeShip(new Position(9,0),fleet.getShip(4),true);
     }
 
     @Override
@@ -59,17 +65,24 @@ public class HyggeAI implements BattleshipsPlayer {
     @Override
     public void hitFeedBack(boolean hit, Fleet enemyShips) {
         field.registerHit(hit);
+        ((BestShotCalculator) currentMode).printGrid();
         if (hit) {
             if (currentMode instanceof HuntMode) {
-                currentMode = new ProbabilityTargetMode(field);
+                currentMode = new TargetMode(field,parityCalculator,field.getLastShot());
             } else {
-                ProbabilityTargetMode targetMode = ((ProbabilityTargetMode) currentMode);
+                TargetMode targetMode = ((TargetMode) currentMode);
                 targetMode.registerHit(field.getLastShot());
                 if (targetMode.hadSunk(enemyShips)) {
-                    currentMode = huntModes[currentRound];
-                }
-                else {
-                    targetMode.setBaseHit(field.getLastShot());
+                    if(targetMode.didShotDifferentShips(enemyShips)) {
+                        for (Position baseHit : targetMode.getOtherShipsHitFragments()) {
+                            queueTargetModes.add(new TargetMode(field,parityCalculator,baseHit));
+                        }
+                    }
+                    if(queueTargetModes.size() > 0) {
+                        currentMode = queueTargetModes.remove(0);
+                    } else {
+                        currentMode = huntModes[currentRound];
+                    }
                 }
             }
         }

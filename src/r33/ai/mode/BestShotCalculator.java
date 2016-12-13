@@ -8,21 +8,31 @@ import java.util.ArrayList;
 /**
  * Created by Ejdems on 07/12/2016.
  */
-public abstract class FieldScanner {
+public abstract class BestShotCalculator {
     protected int[][] grid;
     protected Field field;
-    private int parityCheck = 0;
+    protected final ParityCalculator parityCalculator;
 
-    protected void printGrid() {
-        for (int xx = 0; xx < field.getX(); xx++) {
-            System.out.println("");
-            for (int yy = 0; yy < field.getY(); yy++) {
+    public BestShotCalculator(ParityCalculator parityCalculator) {
+        this.parityCalculator = parityCalculator;
+    }
+
+    public void printGrid() {
+        for (int yy = field.getY()-1; yy >= 0; yy--) {
+            System.out.print(yy + " ");
+            for (int xx = 0; xx < field.getX(); xx++) {
                 if (grid[xx][yy] < 10) {
                     System.out.print(" |" + grid[xx][yy] + " | ");
                 } else {
                     System.out.print(" |" + grid[xx][yy] + "| ");
                 }
             }
+            System.out.println("");
+        }
+        System.out.println("-----------------------------------------------------------------------------");
+        System.out.print("   ");
+        for (int xx = 0; xx < field.getX(); xx++) {
+            System.out.print(" "+xx+"    ");
         }
         System.out.println("\n----------------------------------------\n");
     }
@@ -30,11 +40,7 @@ public abstract class FieldScanner {
     protected Position getBestShot() {
         int bestProbabilityValue = getBestProbabilityValue();
         ArrayList<Position> bestShotPositions = getBestShotPositions(bestProbabilityValue);
-        if(parityCheck >= 0) {
-            return getBestShotPositionByParity(bestShotPositions);
-        } else {
-            return bestShotPositions.get(0);
-        }
+        return parityCalculator.getBestShotPosition(bestShotPositions);
     }
     private int getBestProbabilityValue() {
         int bestShotValue = 0;
@@ -58,24 +64,5 @@ public abstract class FieldScanner {
             }
         }
         return bestShotPositions;
-    }
-
-    private Position getBestShotPositionByParity(ArrayList<Position> bestShotPositions) {
-        if (bestShotPositions.size() > 1) {
-            for (Position bestShotPosition : bestShotPositions) {
-                if (positionIsInParity(bestShotPosition)) {
-                    return bestShotPosition;
-                }
-            }
-        }
-        return bestShotPositions.get(0);
-    }
-    // Position is in "black" or "white" field
-    private boolean positionIsInParity(Position bestShotPosition) {
-        return Math.abs(bestShotPosition.x - bestShotPosition.y) % 2 == parityCheck;
-    }
-
-    public void setParityCheck(int parityCheck) {
-        this.parityCheck = parityCheck;
     }
 }

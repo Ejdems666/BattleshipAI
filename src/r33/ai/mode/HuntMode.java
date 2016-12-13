@@ -8,8 +8,9 @@ import r33.ai.Field;
 /**
  * Created by Ejdems on 06/12/2016.
  */
-public class HuntMode extends FieldScanner implements Mode {
-    public HuntMode(Field field) {
+public class HuntMode extends BestShotCalculator implements Mode {
+    public HuntMode(Field field, ParityCalculator parityCalculator) {
+        super(parityCalculator);
         this.field = field;
     }
 
@@ -30,8 +31,7 @@ public class HuntMode extends FieldScanner implements Mode {
             for (int y = 0; y < field.getY(); y++) {
                 if (canPlaceShipVertically(ship, x, y)) {
                     stampShipsProbabilityInGridVertically(ship, x, y);
-                }
-                if (canPlaceShipHorizontally(ship, x, y)) {
+                }if (canPlaceShipHorizontally(ship, x, y)) {
                     stampShipsProbabilityInGridHorizontally(ship, x, y);
                 }
             }
@@ -42,13 +42,13 @@ public class HuntMode extends FieldScanner implements Mode {
             return false;
         }
         for (int l = y; l < ship.size() + y; l++) {
-            if (isHit(x,l)) {
+            if (wasShot(x,l)) {
                 return false;
             }
         }
         return true;
     }
-    private boolean isHit(int x, int y) {
+    private boolean wasShot(int x, int y) {
         return field.getHit(x,y) != Field.NO_HIT;
     }
     private boolean canPlaceShipHorizontally(Ship ship, int x, int y) {
@@ -56,7 +56,7 @@ public class HuntMode extends FieldScanner implements Mode {
             return false;
         }
         for (int l = x; l < ship.size() + x; l++) {
-            if (isHit(l,y)) {
+            if (wasShot(l,y)) {
                 return false;
             }
         }
@@ -72,4 +72,5 @@ public class HuntMode extends FieldScanner implements Mode {
             grid[l][y] += 1;
         }
     }
+
 }

@@ -2,6 +2,8 @@ package r33.ai;
 
 import battleship.interfaces.Position;
 
+import java.util.Set;
+
 /**
  * Created by Ejdems on 07/12/2016.
  */
@@ -12,8 +14,9 @@ public class Field {
     private final int y;
 
     public static final int NO_HIT = 0;
-    public static final int HIT = 1;
-    public static final int SHIP_HIT = 2;
+    public static final int MISS = 1;
+    public static final int HIT_NOT_SUNK = 2;
+    public static final int HIT_SUNK = 3;
 
     public Field(int x, int y) {
         hits = new int[x][y];
@@ -23,7 +26,7 @@ public class Field {
 
     public void registerHit(boolean hit) {
         System.out.println(hit);
-        hits[lastShot.x][lastShot.y] = hit ? 2 : 1;
+        hits[lastShot.x][lastShot.y] = hit ? HIT_NOT_SUNK : MISS;
     }
 
     public int getX() {
@@ -59,5 +62,11 @@ public class Field {
             }
         }
         System.out.println("\n----------------------------------------\n");
+    }
+
+    public void reStampSunkPositions(Set<Position> positions) {
+        for (Position position : positions) {
+            hits[position.x][position.y] = HIT_SUNK;
+        }
     }
 }
