@@ -3,30 +3,37 @@ package r33.ai.mode;
 import battleship.interfaces.Fleet;
 import battleship.interfaces.Position;
 import battleship.interfaces.Ship;
-import r33.ai.MyShots;
+import r33.ai.*;
+import r33.ai.picker.ParityPicker;
+import r33.ai.picker.ProbabilityPicker;
 
 import java.util.*;
 
 /**
  * Created by Ejdems on 06/12/2016.
  */
-public class TargetMode extends BestShotCalculator implements Mode {
+public class TargetMode extends ProbabilityPicker implements Mode {
     private ArrayList<Ship> previousShips;
     private ArrayList<Ship> sankShips = new ArrayList<>();
     private ArrayList<Position> hitPositions = new ArrayList<>();
+    private ShotsGrid myShots;
+    private final ParityPicker parity;
 
-    public TargetMode(MyShots myShots, ParityCalculator parityCalculator) {
-        super(parityCalculator);
+    public TargetMode(Field field, MyShots myShots, ParityPicker parity) {
+        super(field);
         this.myShots = myShots;
+        this.parity = parity;
         hitPositions.add(myShots.getLastShot());
     }
 
     @Override
     public Position getShot(Fleet enemyShips) {
         previousShips = copyFleet(enemyShips);
-        grid = new int[myShots.getX()][myShots.getY()];
+        scannedGrid = new int[field.getX()][field.getY()];
         scanGrid(enemyShips);
-        return getBestShot();
+        return parity.getFirstValidParityPosition(
+                pickBestPositionsFromScannedGrid()
+        );
     }
     private ArrayList<Ship> copyFleet(Fleet enemyShips) {
         ArrayList<Ship> fleet = new ArrayList<>();
@@ -63,7 +70,7 @@ public class TargetMode extends BestShotCalculator implements Mode {
         return index;
     }
     private boolean canPlaceShipVertically(Ship ship, int x, int y) {
-        if(ship.size() + y > myShots.getY()) {
+        if(ship.size() + y > field.getY()) {
             return false;
         }
         for (int l = y; l < ship.size() + y; l++) {
@@ -74,20 +81,20 @@ public class TargetMode extends BestShotCalculator implements Mode {
         return true;
     }
     private boolean wasShotBefore(int x, int y) {
-        return myShots.getHit(x,y) == MyShots.MISS || myShots.getHit(x,y) == MyShots.HIT_SUNK;
+        return myShots.getCell(x,y) == MyShots.MISS || myShots.getCell(x,y) == MyShots.HIT_SUNK;
     }
     private void stampShipsProbabilityInGridVertically(Ship ship, int x, int y) {
         for (int l = y; l < ship.size() + y; l++) {
             if(wasNoHit(x,l)) {
-                grid[x][l] += 1;
+                scannedGrid[x][l] += 1;
             }
         }
     }
     private boolean wasNoHit(int x, int y) {
-        return myShots.getHit(x,y) == MyShots.NO_HIT;
+        return myShots.getCell(x,y) == MyShots.NO_HIT;
     }
     private boolean canPlaceShipHorizontally(Ship ship, int x, int y) {
-        if(ship.size() + x > myShots.getX()) {
+        if(ship.size() + x > field.getX()) {
             return false;
         }
         for (int l = x; l < ship.size() + x; l++) {
@@ -100,7 +107,7 @@ public class TargetMode extends BestShotCalculator implements Mode {
     private void stampShipsProbabilityInGridHorizontally(Ship ship, int x, int y) {
         for (int l = x; l < ship.size() + x; l++) {
             if(wasNoHit(l,y)) {
-                grid[l][y] += 1;
+                scannedGrid[l][y] += 1;
             }
         }
     }

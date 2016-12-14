@@ -1,39 +1,29 @@
-package r33.ai;
+package r33.ai.mode;
 
 import battleship.interfaces.Position;
+import r33.ai.Field;
+import r33.ai.ShotsGrid;
 
 import java.util.List;
 /**
  * Created by Ejdems on 07/12/2016.
  */
-public class MyShots {
+public class MyShots implements ShotsGrid {
     private int[][] hits;
     private Position lastShot;
-    private final int x;
-    private final int y;
 
     public static final int NO_HIT = 0;
     public static final int MISS = 1;
     public static final int HIT_NOT_SUNK = 2;
     public static final int HIT_SUNK = 3;
 
-    public MyShots(int x, int y) {
-        hits = new int[x][y];
-        this.x = x;
-        this.y = y;
+    public MyShots(Field field) {
+        hits = new int[field.getX()][field.getY()];
     }
 
     public void registerHit(boolean hit) {
         System.out.println(hit);
         hits[lastShot.x][lastShot.y] = hit ? HIT_NOT_SUNK : MISS;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
     }
 
     public Position getLastShot() {
@@ -44,23 +34,9 @@ public class MyShots {
         this.lastShot = lastShot;
     }
 
-    public int getHit(int x, int y) {
+    @Override
+    public int getCell(int x, int y) {
         return hits[x][y];
-    }
-
-    public void printGrid() {
-        System.out.println("hits:");
-        for (int xx = 0; xx < x; xx++) {
-            System.out.println("");
-            for (int yy = 0; yy < y; yy++) {
-                if (hits[xx][yy] < 10) {
-                    System.out.print(" |" + hits[xx][yy] + " | ");
-                } else {
-                    System.out.print(" |" + hits[xx][yy] + "| ");
-                }
-            }
-        }
-        System.out.println("\n----------------------------------------\n");
     }
 
     public void reStampSunkPositions(List<Position> positions) {
