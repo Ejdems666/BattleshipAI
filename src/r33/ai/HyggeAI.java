@@ -112,20 +112,23 @@ public class HyggeAI implements BattleshipsPlayer {
         myBoard.clearBoard();
         if(currentRound%10 == 0) {
             shipPlacementScanner.clearMergedHeatMaps();
-//            parityPicker.setParityMode(0);
+            parityPicker.setParityMode(0);
         }
-//        if(currentRound%5 == 0) {
-//            parityPicker.setParityMode(1);
-//        }
+        if(currentRound%5 == 0) {
+            parityPicker.setParityMode(1);
+        }
         shipPlacementScanner.addHeatMap(enemyShotsHeatMap[currentRound]);
     }
 
     @Override
     public void endMatch(int won, int lost, int draw) {
-        int totalValue = 0;
-        for (int shot : shots) {
-            totalValue += shot;
-        }
-        System.out.println("average: "+(totalValue/shots.length));
+//        int totalValue = 0;
+//        for (int shot : shots) {
+//            if(shot == 100) {
+//                System.out.println("error");
+//            }
+//            totalValue += shot;
+//        }
+//        System.out.println("average: "+(totalValue/shots.length));
     }
 }

@@ -17,14 +17,9 @@ public class StaticShipPlacer implements ShipPlacer {
     @Override
     public void placeFleetOnBoard(Fleet fleet, Board board) {
         board.placeShip(new Position(0, 9), fleet.getShip(0), false);
-        myBoard.registerShipPlacement(new Position(0, 9), fleet.getShip(0), false);
         board.placeShip(new Position(4, 9), fleet.getShip(1), false);
-        myBoard.registerShipPlacement(new Position(4, 9), fleet.getShip(1), false);
         board.placeShip(new Position(0, 0), fleet.getShip(2), false);
-        myBoard.registerShipPlacement(new Position(0, 0), fleet.getShip(2), false);
         board.placeShip(new Position(4, 0), fleet.getShip(3), false);
-        myBoard.registerShipPlacement(new Position(4, 0), fleet.getShip(3), false);
         board.placeShip(new Position(0, 2), fleet.getShip(4), true);
-        myBoard.registerShipPlacement(new Position(0, 2), fleet.getShip(4), true);
     }
 }

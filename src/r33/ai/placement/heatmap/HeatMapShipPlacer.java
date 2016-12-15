@@ -34,15 +34,11 @@ public class HeatMapShipPlacer implements ShipPlacer {
             ship = fleet.getShip(i);
             vertical = shipPlacementScanner.willBeVertical(ship);
             idealPositions = shipPlacementScanner.getBestPositionsFromScan();
-            System.out.println("heatmap");
-            shipPlacementScanner.printGrid();
             if (idealPositions.size() > 1) {
                 basePosition = idealPositions.get(random.nextInt(idealPositions.size() - 1));
             } else {
                 basePosition = idealPositions.get(0);
             }
-            System.out.println(basePosition);
-            System.out.println("vertical: "+ vertical);
             board.placeShip(basePosition, ship, vertical);
             myBoard.registerShipPlacement(basePosition, ship, vertical);
         }
