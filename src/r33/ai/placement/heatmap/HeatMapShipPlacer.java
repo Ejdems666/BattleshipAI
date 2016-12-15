@@ -24,22 +24,24 @@ public class HeatMapShipPlacer implements ShipPlacer {
     @Override
     public void placeFleetOnBoard(Fleet fleet, Board board) {
         ArrayList<Position> idealPositions;
-        boolean horizontal;
+        boolean vertical;
         Ship ship;
         Position basePosition;
+        int index;
         for (int i = 0; i < fleet.getNumberOfShips(); i++) {
             ship = fleet.getShip(i);
-            horizontal = random.nextBoolean();
-            try {
-                idealPositions = shipPlacementScanner.getBestPositionsForShip(ship, horizontal);
-            } catch (Exception e) {
-                e.printStackTrace();
-                return;
-            }
+            vertical = shipPlacementScanner.willBeVertical(ship);
+            idealPositions = shipPlacementScanner.getBestPositionsFromScan();
             shipPlacementScanner.printGrid();
-            basePosition = idealPositions.get(random.nextInt(idealPositions.size()-1));
-            board.placeShip(basePosition,ship,horizontal);
-            shipPlacementScanner.registerShipPlacement(basePosition,ship,horizontal);
+            if (idealPositions.size() > 1) {
+                basePosition = idealPositions.get(random.nextInt(idealPositions.size() - 1));
+            } else {
+                basePosition = idealPositions.get(0);
+            }
+            System.out.println(basePosition);
+            System.out.println(vertical);
+            board.placeShip(basePosition, ship, vertical);
+            shipPlacementScanner.registerShipPlacement(basePosition, ship, vertical);
         }
     }
 }

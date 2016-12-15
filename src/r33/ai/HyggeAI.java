@@ -5,7 +5,6 @@ import battleship.interfaces.Board;
 import battleship.interfaces.Fleet;
 import battleship.interfaces.Position;
 import r33.ai.picker.ParityPicker;
-import r33.ai.picker.ProbabilityPicker;
 import r33.ai.placement.ShipPlacer;
 import r33.ai.placement.heatmap.ShipPlacementScanner;
 import r33.ai.placement.heatmap.EnemyShotsHeatMap;
@@ -40,7 +39,7 @@ public class HyggeAI implements BattleshipsPlayer {
     @Override
     public void startRound(int round) {
         init(--round);
-        if (round == 1) {
+        if(round == 1) {
             shipPlacer = new HeatMapShipPlacer(shipPlacementScanner);
         }
     }
@@ -55,7 +54,11 @@ public class HyggeAI implements BattleshipsPlayer {
 
     @Override
     public void placeShips(Fleet fleet, Board board) {
-        shipPlacer.placeFleetOnBoard(fleet, board);
+        try {
+            shipPlacer.placeFleetOnBoard(fleet, board);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -73,7 +76,7 @@ public class HyggeAI implements BattleshipsPlayer {
     @Override
     public void hitFeedBack(boolean hit, Fleet enemyShips) {
         myShots[currentRound].registerHit(hit);
-        ((ProbabilityPicker) currentMode).printGrid();
+//        ((ProbabilityPicker) currentMode).printGrid();
         if (hit) {
             if (currentMode instanceof HuntMode) {
                 currentMode = new TargetMode(field, myShots[currentRound], parityPicker);
@@ -90,6 +93,10 @@ public class HyggeAI implements BattleshipsPlayer {
 
     @Override
     public void endRound(int round, int points, int enemyPoints) {
+        if(currentRound%10 == 0) {
+            shipPlacementScanner = new ShipPlacementScanner(field);
+            shipPlacer = new HeatMapShipPlacer(shipPlacementScanner);
+        }
         shipPlacementScanner.addHeatMap(enemyShotsHeatMap[currentRound]);
     }
 

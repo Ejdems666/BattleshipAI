@@ -13,15 +13,16 @@ import java.util.ArrayList;
  */
 public class ShipPlacementScanner extends ProbabilityPicker {
     private int[][] mergedHeatMaps;
-    private boolean[][] placementGrid;
+    private boolean[][] occupied;
+    private int bestPlacementValue = 0;
 
     public ShipPlacementScanner(Field field) {
         super(field);
-        placementGrid = new boolean[field.getX()][field.getY()];
         mergedHeatMaps = new int[field.getX()][field.getY()];
     }
 
     public void addHeatMap(ShotsGrid heatMap) {
+        occupied = new boolean[field.getX()][field.getY()];
         for (int x = 0; x < field.getX(); x++) {
             for (int y = 0; y < field.getY(); y++) {
                 if(heatMap.getCell(x,y) == 0) {
@@ -33,17 +34,28 @@ public class ShipPlacementScanner extends ProbabilityPicker {
         }
     }
 
-    public ArrayList<Position> getBestPositionsForShip(Ship ship, boolean horizontal) {
+    public boolean willBeVertical(Ship ship) {
         if (ship.size() == 1) {
             scannedGrid = mergedHeatMaps;
-        } else {
-            if (horizontal) {
-                scanGridHorizontally(ship);
-            } else {
-                scanGridVertically(ship);
-            }
+            bestPlacementValue = getIdealValue();
+            return true;
         }
-        return pickBestPositionsFromScannedGrid();
+        scanGridVertically(ship);
+        int[][] tempVerticalScan = scannedGrid;
+        int highestVerticalValue = getIdealValue();
+        scanGridHorizontally(ship);
+        int highestHorizontalValue = getIdealValue();
+        if(highestHorizontalValue > highestVerticalValue) {
+            bestPlacementValue = highestHorizontalValue;
+            return false;
+        } else {
+            bestPlacementValue = highestVerticalValue;
+            scannedGrid = tempVerticalScan;
+            return true;
+        }
+    }
+    public ArrayList<Position> getBestPositionsFromScan() {
+        return getPositionsWithSameValue(bestPlacementValue);
     }
     private void scanGridVertically(Ship ship) {
         scannedGrid = new int[field.getX()][field.getY()];
@@ -60,7 +72,7 @@ public class ShipPlacementScanner extends ProbabilityPicker {
             return false;
         }
         for (int l = y; l < ship.size()+y; l++) {
-            if(placementGrid[x][l]) {
+            if(occupied[x][l]) {
                 return false;
             }
         }
@@ -81,14 +93,13 @@ public class ShipPlacementScanner extends ProbabilityPicker {
                 }
             }
         }
-        return;
     }
     private boolean canPlaceShipHorizontally(Ship ship, int x, int y) {
         if(ship.size() + x > field.getX()) {
             return false;
         }
         for (int l = x; l < ship.size()+x; l++) {
-            if(placementGrid[l][y]) {
+            if(occupied[l][y]) {
                 return false;
             }
         }
@@ -100,15 +111,20 @@ public class ShipPlacementScanner extends ProbabilityPicker {
         }
     }
 
-    public void registerShipPlacement(Position basePosition, Ship ship, boolean horizontal) {
-        if(horizontal) {
-            for (int l = basePosition.x; l < ship.size()+basePosition.x; l++) {
-                placementGrid[l][basePosition.y] = true;
+    public void registerShipPlacement(Position basePosition, Ship ship, boolean vertical) {
+        try {
+            if (vertical) {
+                for (int l = basePosition.y; l < ship.size() + basePosition.y; l++) {
+                    occupied[basePosition.x][l] = true;
+                }
+            } else {
+                for (int l = basePosition.x; l < ship.size() + basePosition.x; l++) {
+                    occupied[l][basePosition.y] = true;
+                }
             }
-        } else {
-            for (int l = basePosition.y; l < ship.size()+basePosition.y; l++) {
-                placementGrid[basePosition.x][l] = true;
-            }
+        } catch (Exception e) {
+            int size = ship.size();
+            e.printStackTrace();
         }
     }
 }

@@ -16,12 +16,12 @@ public abstract class ProbabilityPicker {
         this.field = field;
     }
 
-    public ArrayList<Position> pickBestPositionsFromScannedGrid() {
+    protected ArrayList<Position> pickBestPositionsFromScannedGrid() {
         int idealValue = getIdealValue();
         return getPositionsWithSameValue(idealValue);
     }
 
-    private int getIdealValue() {
+    protected int getIdealValue() {
         int highestValue = 0;
         for (int x = 0; x < field.getX(); x++) {
             for (int y = 0; y < field.getY(); y++) {
@@ -33,7 +33,7 @@ public abstract class ProbabilityPicker {
         return highestValue;
     }
 
-    private ArrayList<Position> getPositionsWithSameValue(int value) {
+    protected ArrayList<Position> getPositionsWithSameValue(int value) {
         ArrayList<Position> bestShotPositions = new ArrayList<>();
         for (int x = 0; x < field.getX(); x++) {
             for (int y = 0; y < field.getY(); y++) {
@@ -50,6 +50,8 @@ public abstract class ProbabilityPicker {
             System.out.print(y + " ");
             for (int x = 0; x < field.getX(); x++) {
                 if (scannedGrid[x][y] < 10) {
+                    System.out.print(" |" + scannedGrid[x][y] + "  | ");
+                } else if (scannedGrid[x][y] < 100) {
                     System.out.print(" |" + scannedGrid[x][y] + " | ");
                 } else {
                     System.out.print(" |" + scannedGrid[x][y] + "| ");
@@ -60,7 +62,7 @@ public abstract class ProbabilityPicker {
         System.out.println("-----------------------------------------------------------------------------");
         System.out.print("   ");
         for (int x = 0; x < field.getX(); x++) {
-            System.out.print(" "+x+"    ");
+            System.out.print("  "+x+"    ");
         }
         System.out.println("\n----------------------------------------\n");
     }
