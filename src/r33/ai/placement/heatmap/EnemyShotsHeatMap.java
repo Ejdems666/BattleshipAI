@@ -10,14 +10,21 @@ import r33.ai.ShotsGrid;
 public class EnemyShotsHeatMap implements ShotsGrid {
     private int[][] heatMap;
     private int shotValue;
+    private final Field field;
 
     public EnemyShotsHeatMap(Field field) {
+        this.field = field;
         heatMap = new int[field.getX()][field.getY()];
         shotValue = 1;
     }
 
-    public void registerEnemyShot(Position position) {
+    public void registerEnemyMiss(Position position) {
         heatMap[position.x][position.y] = shotValue++;
+    }
+
+    public void registerEnemyHit(Position position) {
+        heatMap[position.x][position.y] = shotValue+field.getNumberOfCells()/2;
+        shotValue++;
     }
 
     @Override

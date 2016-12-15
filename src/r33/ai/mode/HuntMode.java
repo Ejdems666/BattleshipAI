@@ -14,7 +14,7 @@ public class HuntMode extends ProbabilityPicker implements Mode {
     private final ParityPicker parity;
     private ShotsGrid myShots;
 
-    public HuntMode(Field field, MyShots myShots, ParityPicker parity) {
+    public HuntMode(Field field, Shots myShots, ParityPicker parity) {
         super(field);
         this.myShots = myShots;
         this.parity = parity;
@@ -57,7 +57,7 @@ public class HuntMode extends ProbabilityPicker implements Mode {
         return true;
     }
     private boolean wasShot(int x, int y) {
-        return myShots.getCell(x,y) != MyShots.NO_HIT;
+        return myShots.getCell(x,y) != Shots.NO_HIT;
     }
     private boolean canPlaceShipHorizontally(Ship ship, int x, int y) {
         if(ship.size() + x > field.getX()) {

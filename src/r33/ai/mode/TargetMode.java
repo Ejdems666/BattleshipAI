@@ -19,7 +19,7 @@ public class TargetMode extends ProbabilityPicker implements Mode {
     private ShotsGrid myShots;
     private final ParityPicker parity;
 
-    public TargetMode(Field field, MyShots myShots, ParityPicker parity) {
+    public TargetMode(Field field, Shots myShots, ParityPicker parity) {
         super(field);
         this.myShots = myShots;
         this.parity = parity;
@@ -81,7 +81,7 @@ public class TargetMode extends ProbabilityPicker implements Mode {
         return true;
     }
     private boolean wasShotBefore(int x, int y) {
-        return myShots.getCell(x,y) == MyShots.MISS || myShots.getCell(x,y) == MyShots.HIT_SUNK;
+        return myShots.getCell(x,y) == Shots.MISS || myShots.getCell(x,y) == Shots.HIT_SUNK;
     }
     private void stampShipsProbabilityInGridVertically(Ship ship, int x, int y) {
         for (int l = y; l < ship.size() + y; l++) {
@@ -91,7 +91,7 @@ public class TargetMode extends ProbabilityPicker implements Mode {
         }
     }
     private boolean wasNoHit(int x, int y) {
-        return myShots.getCell(x,y) == MyShots.NO_HIT;
+        return myShots.getCell(x,y) == Shots.NO_HIT;
     }
     private boolean canPlaceShipHorizontally(Ship ship, int x, int y) {
         if(ship.size() + x > field.getX()) {

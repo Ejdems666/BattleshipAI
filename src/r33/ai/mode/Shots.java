@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by Ejdems on 07/12/2016.
  */
-public class MyShots implements ShotsGrid {
+public class Shots implements ShotsGrid {
     private int[][] hits;
     private Position lastShot;
 
@@ -17,7 +17,7 @@ public class MyShots implements ShotsGrid {
     public static final int HIT_NOT_SUNK = 2;
     public static final int HIT_SUNK = 3;
 
-    public MyShots(Field field) {
+    public Shots(Field field) {
         hits = new int[field.getX()][field.getY()];
     }
 

@@ -5,6 +5,7 @@ import battleship.interfaces.Ship;
 import r33.ai.Field;
 import r33.ai.ShotsGrid;
 import r33.ai.picker.ProbabilityPicker;
+import r33.ai.placement.MyBoard;
 
 import java.util.ArrayList;
 
@@ -13,16 +14,20 @@ import java.util.ArrayList;
  */
 public class ShipPlacementScanner extends ProbabilityPicker {
     private int[][] mergedHeatMaps;
-    private boolean[][] occupied;
     private int bestPlacementValue = 0;
+    private MyBoard myBoard;
 
-    public ShipPlacementScanner(Field field) {
+    public ShipPlacementScanner(Field field, MyBoard myBoard) {
         super(field);
+        this.myBoard = myBoard;
+        mergedHeatMaps = new int[field.getX()][field.getY()];
+    }
+
+    public void clearMergedHeatMaps() {
         mergedHeatMaps = new int[field.getX()][field.getY()];
     }
 
     public void addHeatMap(ShotsGrid heatMap) {
-        occupied = new boolean[field.getX()][field.getY()];
         for (int x = 0; x < field.getX(); x++) {
             for (int y = 0; y < field.getY(); y++) {
                 if(heatMap.getCell(x,y) == 0) {
@@ -72,7 +77,7 @@ public class ShipPlacementScanner extends ProbabilityPicker {
             return false;
         }
         for (int l = y; l < ship.size()+y; l++) {
-            if(occupied[x][l]) {
+            if(myBoard.hasShip(new Position(x,l))) {
                 return false;
             }
         }
@@ -99,7 +104,7 @@ public class ShipPlacementScanner extends ProbabilityPicker {
             return false;
         }
         for (int l = x; l < ship.size()+x; l++) {
-            if(occupied[l][y]) {
+            if(myBoard.hasShip(new Position(l,y))) {
                 return false;
             }
         }
@@ -108,23 +113,6 @@ public class ShipPlacementScanner extends ProbabilityPicker {
     private void calculateHorizontalPlacementScoreForPosition(Ship ship, int x, int y) {
         for (int l = x; l < ship.size() + x; l++) {
             scannedGrid[x][y] += mergedHeatMaps[l][y];
-        }
-    }
-
-    public void registerShipPlacement(Position basePosition, Ship ship, boolean vertical) {
-        try {
-            if (vertical) {
-                for (int l = basePosition.y; l < ship.size() + basePosition.y; l++) {
-                    occupied[basePosition.x][l] = true;
-                }
-            } else {
-                for (int l = basePosition.x; l < ship.size() + basePosition.x; l++) {
-                    occupied[l][basePosition.y] = true;
-                }
-            }
-        } catch (Exception e) {
-            int size = ship.size();
-            e.printStackTrace();
         }
     }
 }

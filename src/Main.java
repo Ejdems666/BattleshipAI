@@ -4,7 +4,7 @@
 public class Main {
     public static void main(String[] args) {
 //        ParityPicker parityCalculator = new ParityPicker(0);
-//        MyShots shotsGrid = new MyShots(10, 10);
+//        Shots shotsGrid = new Shots(10, 10);
 //        HuntMode huntMode = new HuntMode(shotsGrid,parityCalculator);
 //        Fleet fleet = new SimpleFleet(new int[]{2,2,3,4,5});
 //        for (int i = 0; i < 20; i++) {
@@ -21,7 +21,7 @@ public class Main {
 ////            shotsGrid.printScannedGrid();
 ////        }
 //        System.out.println("\n_____________________________________________________________________\n");
-//        shotsGrid = new MyShots(10, 10);
+//        shotsGrid = new Shots(10, 10);
 //        huntMode = new HuntMode(shotsGrid,parityCalculator);
 //        for (int i = 0; i < 20; i++) {
 //            shotsGrid.setLastShot(huntMode.getShot(fleet));

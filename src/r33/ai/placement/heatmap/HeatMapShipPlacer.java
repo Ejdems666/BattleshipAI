@@ -4,6 +4,7 @@ import battleship.interfaces.Board;
 import battleship.interfaces.Fleet;
 import battleship.interfaces.Position;
 import battleship.interfaces.Ship;
+import r33.ai.placement.MyBoard;
 import r33.ai.placement.ShipPlacer;
 
 import java.util.ArrayList;
@@ -15,9 +16,11 @@ import java.util.Random;
 public class HeatMapShipPlacer implements ShipPlacer {
     private ShipPlacementScanner shipPlacementScanner;
     private Random random;
+    private MyBoard myBoard;
 
-    public HeatMapShipPlacer(ShipPlacementScanner shipPlacementScanner) {
+    public HeatMapShipPlacer(ShipPlacementScanner shipPlacementScanner, MyBoard myBoard) {
         this.shipPlacementScanner = shipPlacementScanner;
+        this.myBoard = myBoard;
         random = new Random();
     }
 
@@ -27,11 +30,11 @@ public class HeatMapShipPlacer implements ShipPlacer {
         boolean vertical;
         Ship ship;
         Position basePosition;
-        int index;
         for (int i = 0; i < fleet.getNumberOfShips(); i++) {
             ship = fleet.getShip(i);
             vertical = shipPlacementScanner.willBeVertical(ship);
             idealPositions = shipPlacementScanner.getBestPositionsFromScan();
+            System.out.println("heatmap");
             shipPlacementScanner.printGrid();
             if (idealPositions.size() > 1) {
                 basePosition = idealPositions.get(random.nextInt(idealPositions.size() - 1));
@@ -39,9 +42,9 @@ public class HeatMapShipPlacer implements ShipPlacer {
                 basePosition = idealPositions.get(0);
             }
             System.out.println(basePosition);
-            System.out.println(vertical);
+            System.out.println("vertical: "+ vertical);
             board.placeShip(basePosition, ship, vertical);
-            shipPlacementScanner.registerShipPlacement(basePosition, ship, vertical);
+            myBoard.registerShipPlacement(basePosition, ship, vertical);
         }
     }
 }
